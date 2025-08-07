@@ -14,18 +14,21 @@ class AvitoCarParser:
                 page = context.new_page()
 
                 print("🔍 Открываю страницу Avito...")
-                page.goto(self.url, timeout=10000)
-                page.wait_for_selector("h1", timeout=10000)
+                page.goto(self.url, timeout=20000)
+                page.wait_for_selector("span[itemprop='price']", timeout=15000)
 
                 title = page.locator("h1").text_content()
                 price_element = page.locator("span[itemprop='price']")
                 price_raw = price_element.get_attribute("content") or price_element.text_content()
 
-                # Очистка цены
+                # Сохраняем HTML-страницу на случай ошибки
+                with open("avito_debug.html", "w", encoding="utf-8") as f:
+                    f.write(page.content())
+
                 price = int("".join(filter(str.isdigit, price_raw)))
 
-                print(f"✅ Успешно извлечено: {title=}, {price=}")
-                return {"title": title, "price": price}
+                print(f"✅ Успешно извлечено:\n📌 title = {title}\n💰 price = {price}")
+                return {"title": title.strip(), "price": price}
 
         except PlaywrightTimeoutError:
             print("❌ Таймаут ожидания загрузки страницы Avito.")

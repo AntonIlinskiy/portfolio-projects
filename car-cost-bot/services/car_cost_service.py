@@ -1,46 +1,38 @@
+from services.parsers.avito_parser_playwright import AvitoCarParser
+from services.cost_calculator import calculate_total_cost
 from typing import Optional, Dict
 
-from services.parsers.avito_parser import AvitoCarParser
-from services.parsers.drom_parser import DromCarParser
-from services.cost_calculator import calculate_total_cost
-
-
 def get_final_car_cost(url: str) -> Optional[Dict[str, int]]:
-    print("▶️ Вызов get_final_car_cost")
+    print("\n▶️ Вызов get_final_car_cost")
 
-    # Выбор парсера по домену
-    if "avito.ru" in url:
+    try:
         parser = AvitoCarParser(url)
-    elif "drom.ru" in url:
-        parser = DromCarParser(url)
-    else:
-        print("❌ Неизвестный источник ссылки")
+        car_info = parser.get_info()
+        print("\U0001F9FE car_info получен:", car_info)
+    except Exception as e:
+        print(f"❌ Ошибка при получении информации: {e}")
         return None
 
-    car_info = parser.get_info()
-    print("🧾 car_info получен:", car_info)
-
-    if not car_info:
-        print("❌ car_info пустой или None")
+    if not car_info or not car_info.get("price"):
+        print("❌ car_info пустой или не содержит цену")
         return None
 
     base_price = car_info.get("price")
-    print("💰 Извлечён base_price:", base_price)
+    print("\U0001F4B0 Извлечён base_price:", base_price)
 
     cost_result = calculate_total_cost(base_price)
     return cost_result
 
 
-# Локальный тест
+# Тест запуска для отладки парсера
 if __name__ == "__main__":
-    # 🔧 Подставь сюда ссылку с Avito или Drom для проверки
-    test_url = "https://auto.drom.ru/moskva/cars/bmw/3-series/1234567890.html"
-
+    test_url = "https://www.avito.ru/moskva/avtomobili/bmw_3_seriya_2.0_at_2012_250_000_km_7401611722"
     result = get_final_car_cost(test_url)
-    print("📦 Результат get_final_car_cost:", result)
+
+    print("\n📦 Результат get_final_car_cost:", result)
 
     if result:
         for key, value in result.items():
             print(f"{key}: {value} ₽")
     else:
-        print("Ошибка: результат отсутствует.")
+        print("❌ Не удалось получить стоимость автомобиля")

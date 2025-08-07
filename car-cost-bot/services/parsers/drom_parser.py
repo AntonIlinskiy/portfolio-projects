@@ -1,4 +1,3 @@
-import time
 import requests
 from bs4 import BeautifulSoup
 from typing import Optional
@@ -12,54 +11,50 @@ class DromCarParser:
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                 'AppleWebKit/537.36 (KHTML, like Gecko) '
                 'Chrome/115.0.0.0 Safari/537.36'
-            ),
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'ru,en;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
-            'Referer': 'https://auto.drom.ru/',
+            )
         }
 
     def get_info(self) -> Optional[dict]:
         try:
-            print("🌐 Отправляю запрос к Drom...")
-            time.sleep(2)  # Задержка для обхода блокировки
             response = requests.get(self.url, headers=self.headers, timeout=10)
             response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            print(f"❌ Ошибка при запросе: {e}")
-            return None
         except Exception as e:
-            print(f"❌ Другая ошибка при запросе: {e}")
+            print(f"❌ Ошибка при запросе: {e}")
             return None
 
         soup = BeautifulSoup(response.text, 'lxml')
 
+        # Сохраняем HTML-страницу для отладки
+        with open("debug_drom.html", "w", encoding="utf-8") as f:
+            f.write(response.text)
+            print("📄 HTML-страница сохранена в debug_drom.html")
+
         try:
-            title_tag = soup.find("span", {"data-ftid": "advert_title"})
-            price_tag = soup.find("span", {"data-ftid": "bull_price"})
+            # Обновлённые селекторы по сохранённому HTML
+            title_elem = soup.select_one("h1.css-1fkrnxv.e162wx9x0")
+            price_elem = soup.select_one("span.css-1uvydh2.e162wx9x0")
 
-            if not title_tag or not price_tag:
-                print("❌ Не удалось распарсить данные (title или price)")
-                return None
-
-            title = title_tag.text.strip()
-            price_str = price_tag.text.strip()
-            price = int(''.join(filter(str.isdigit, price_str)))
-
-            return {
-                "title": title,
-                "price": price
-            }
+            title = title_elem.text.strip() if title_elem else None
+            price_text = price_elem.text.strip() if price_elem else None
+            price = int(''.join(filter(str.isdigit, price_text))) if price_text else None
         except Exception as e:
-            print(f"❌ Ошибка парсинга HTML: {e}")
+            print(f"❌ Ошибка при парсинге: {e}")
             return None
+
+        if not title or not price:
+            print("❌ Не удалось распарсить данные (title или price)")
+            return None
+
+        return {
+            "title": title,
+            "price": price
+        }
 
 
 # Тестовый запуск
 if __name__ == "__main__":
     print("🔍 Тест запуска drom_parser начат")
-    test_url = "https://auto.drom.ru/moskva/cars/mercedes-benz/s-class/621726982.html"  # ⚠️ Вставь сюда актуальный URL
+    test_url = "https://auto.drom.ru/moscow/bmw/5-series/732577793.html"  # Тестовая ссылка
     parser = DromCarParser(test_url)
     info = parser.get_info()
-    print("📦 Получено:", info)
+    print("🔍 Полученная информация с Drom:", info)

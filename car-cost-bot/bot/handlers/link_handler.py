@@ -1,13 +1,25 @@
 from aiogram import Router, types
 from services.car_cost_service import get_final_car_cost
+from urllib.parse import urlparse
 
 router = Router()
 
+def is_valid_avito_url(url: str) -> bool:
+    parsed = urlparse(url)
+    return (
+        "avito.ru" in parsed.netloc and
+        "/avtomobili/" in parsed.path
+    )
+
+def is_valid_drom_url(url: str) -> bool:
+    parsed = urlparse(url)
+    return "drom.ru" in parsed.netloc and "/cars/" in parsed.path
+
 @router.message()
 async def handle_link(message: types.Message):
-    text = message.text
+    text = message.text.strip()
 
-    if "avito.ru" in text or "drom.ru" in text:
+    if is_valid_avito_url(text) or is_valid_drom_url(text):
         await message.answer("⏳ Пытаюсь получить информацию по ссылке...")
 
         result = get_final_car_cost(text)
@@ -24,4 +36,4 @@ async def handle_link(message: types.Message):
             f"💰 Итого: {result['total_cost']} ₽"
         )
     else:
-        await message.answer("📎 Пожалуйста, отправьте ссылку на Avito или Drom.")
+        await message.answer("📎 Пожалуйста, отправьте корректную ссылку на авто с Avito или Drom.")
