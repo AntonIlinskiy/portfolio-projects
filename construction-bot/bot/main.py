@@ -1,22 +1,22 @@
 import asyncio
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 from bot.config import TOKEN
-from bot.handlers import start
+
+# импортируем именно router из каждого файла и даём имена
+from bot.handlers.start import router as start_router
 from bot.handlers.services import router as services_router
 from bot.handlers.request import router as request_router
-from bot.handlers import start, services, request
-from bot.handlers import portfolio
-
+from bot.handlers.portfolio import router as portfolio_router
 
 async def main():
     bot = Bot(token=TOKEN)
     dp = Dispatcher()
 
-    # Подключаем роутеры
-    dp.include_router(start.router)
+    dp.include_router(start_router)
     dp.include_router(services_router)
-    dp.include_router(request.router)
-    dp.include_router(portfolio.router)
+    dp.include_router(request_router)
+    dp.include_router(portfolio_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
