@@ -1,4 +1,3 @@
-# bot/keyboards.py
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def main_menu() -> ReplyKeyboardMarkup:
@@ -7,6 +6,7 @@ def main_menu() -> ReplyKeyboardMarkup:
             [KeyboardButton(text="📋 Услуги")],
             [KeyboardButton(text="📂 Портфолио")],
             [KeyboardButton(text="📝 Оставить заявку")],
+            [KeyboardButton(text="💬 Отзывы клиентов")],
         ],
         resize_keyboard=True
     )

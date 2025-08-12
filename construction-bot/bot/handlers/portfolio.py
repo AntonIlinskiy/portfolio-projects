@@ -1,4 +1,3 @@
-# bot/handlers/portfolio.py
 from aiogram import Router, F
 from aiogram.types import Message, FSInputFile, InputMediaPhoto
 
@@ -14,7 +13,6 @@ async def portfolio(message: Message):
         FSInputFile(base + "construction.jpg"),
     ]
 
-    # альбом (media-group) — минимум 2, максимум 10
     media = [
         InputMediaPhoto(media=imgs[0], caption="Примеры наших работ: дизайн, ремонт и строительство."),
         InputMediaPhoto(media=imgs[1]),

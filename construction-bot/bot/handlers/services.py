@@ -1,11 +1,9 @@
-# bot/handlers/services.py
 from aiogram import Router, F
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from bot.keyboards import services_menu, main_menu
 
 router = Router()
 
-# Кнопки возврата
 back_to_services_btn = KeyboardButton(text="⬅️ Назад")
 back_to_main_btn = KeyboardButton(text="🏠 Возврат в главное меню")
 
@@ -38,7 +36,7 @@ async def handle_construction(message: Message):
         reply_markup=back_kb()
     )
 
-# Навигация
+
 @router.message(F.text == "⬅️ Назад")
 async def back_to_services(message: Message):
     await message.answer("Выберите услугу:", reply_markup=services_menu())
