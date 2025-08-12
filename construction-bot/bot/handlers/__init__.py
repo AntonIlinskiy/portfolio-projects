@@ -16,6 +16,7 @@ def _try_include(name: str):
     except Exception as e:
         print(f"[handlers] failed: {name} -> {e}")
 
-for mod in ["start", "services", "portfolio", "reviews", "faq", "calc", "info", "request", "promos"]:
+for mod in ["start", "services", "portfolio", "reviews", "faq", "calc", "info", "request", "promos", "test_google"]:
     _try_include(mod)
+
 

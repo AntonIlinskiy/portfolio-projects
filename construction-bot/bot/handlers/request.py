@@ -3,6 +3,8 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, ReplyKey
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 import re
+from datetime import datetime
+from services.gsheets import append_lead_row
 
 router = Router()
 
@@ -153,3 +155,45 @@ async def req_back_to_main(message: Message, state: FSMContext):
         await message.answer("🏠 Главное меню", reply_markup=main_menu())
     except Exception:
         await message.answer("🏠 Главное меню")
+
+async def _save_request_to_gsheets(message, *, name: str, phone: str, service: str | None, comment: str | None):
+    try:
+        append_lead_row(
+            when=datetime.now(),
+            name=name,
+            phone=phone,
+            username=message.from_user.username,
+            source="Telegram",
+            service=service,
+            comment=comment,
+        )
+    except Exception as e:
+        print(f"[GSHEETS] Ошибка записи: {e}")
+
+@router.message(F.text == "✅ Отправить заявку")  # пример — заменишь на свой финальный триггер
+async def finalize_request(message: Message, state: FSMContext):
+    # Достаём всё, что собрали ранее
+    data = await state.get_data()
+    name = data.get("name")
+    phone = data.get("phone")
+    service = data.get("service")       # если в шаге выбора услуги сохранял(а)
+    comment = data.get("comment")       # если есть поле "комментарий"
+
+    # Пишем в Google Sheets
+    await _save_request_to_gsheets(
+        message,
+        name=name,
+        phone=phone,
+        service=service,
+        comment=comment,
+    )
+
+    # Сообщение пользователю
+    await message.answer(
+        "✅ Заявка принята! Мы свяжемся с вами в ближайшее время.",
+    )
+
+    # Сброс состояния
+    await state.clear()
+
+
