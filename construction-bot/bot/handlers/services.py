@@ -1,46 +1,59 @@
 from aiogram import Router, F
+from aiogram.filters import StateFilter
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
-from bot.keyboards import services_menu, main_menu
+from bot.keyboards import main_menu
 
 router = Router()
 
-back_to_services_btn = KeyboardButton(text="⬅️ Назад")
-back_to_main_btn = KeyboardButton(text="🏠 Возврат в главное меню")
+# Кнопки
+BTN_BACK = KeyboardButton(text="🔙 Назад")
+BTN_HOME = KeyboardButton(text="⬅️ Возврат в главное меню")
 
-def back_kb() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
-        keyboard=[[back_to_services_btn], [back_to_main_btn]],
-        resize_keyboard=True
-    )
+# Подменю "Услуги"
+services_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="🛠 Ремонт квартир под ключ")],
+        [KeyboardButton(text="🏡 Строительство домов")],
+        [KeyboardButton(text="📐 Проектирование домов")],
+        [BTN_HOME, BTN_BACK],
+    ],
+    resize_keyboard=True
+)
 
-@router.message(F.text == "📐 Проектирование домов")
-async def handle_design(message: Message):
+@router.message(StateFilter(None), F.text == "🏗 Услуги")
+async def services_menu(message: Message):
     await message.answer(
-        "📐 Проектирование жилых и коммерческих объектов.\n"
-        "Учитываем пожелания и делаем оптимальный проект.",
-        reply_markup=back_kb()
+        "Выберите категорию услуги:",
+        reply_markup=services_kb
     )
 
-@router.message(F.text == "🛠 Ремонт квартир под ключ")
-async def handle_renovation(message: Message):
+@router.message(StateFilter(None), F.text == "🛠 Ремонт квартир под ключ")
+async def service_repair(message: Message):
     await message.answer(
-        "🛠 Ремонт любой сложности: от косметического до капитального. "
-        "Гарантия, качество, сроки.",
-        reply_markup=back_kb()
+        "🛠 Ремонт любой сложности: от косметического до капитального.\n"
+        "Гарантия, качество и соблюдение сроков.",
+        reply_markup=services_kb
     )
 
-@router.message(F.text == "🏡 Строительство домов")
-async def handle_construction(message: Message):
+@router.message(StateFilter(None), F.text == "🏡 Строительство домов")
+async def service_build(message: Message):
     await message.answer(
-        "🏡 Строим дома и коттеджи под ключ. Современные технологии и материалы.",
-        reply_markup=back_kb()
+        "🏡 Строим дома, коттеджи и таунхаусы под ключ.\n"
+        "Современные технологии и качественные материалы.",
+        reply_markup=services_kb
     )
 
+@router.message(StateFilter(None), F.text == "📐 Проектирование домов")
+async def service_design(message: Message):
+    await message.answer(
+        "📐 Проектирование жилых и коммерческих объектов с учётом ваших требований.",
+        reply_markup=services_kb
+    )
 
-@router.message(F.text == "⬅️ Назад")
+@router.message(StateFilter(None), F.text == "🔙 Назад")
 async def back_to_services(message: Message):
-    await message.answer("Выберите услугу:", reply_markup=services_menu())
+    await services_menu(message)
 
-@router.message(F.text == "🏠 Возврат в главное меню")
-async def back_to_main(message: Message):
-    await message.answer("Главное меню:", reply_markup=main_menu())
+@router.message(StateFilter(None), F.text == "⬅️ Возврат в главное меню")
+async def back_home(message: Message):
+    await message.answer("🏠 Главное меню", reply_markup=main_menu())

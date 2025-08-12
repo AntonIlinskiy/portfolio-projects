@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
 from bot.keyboards import main_menu, services_menu
@@ -20,3 +20,7 @@ async def open_portfolio(message: Message):
 @router.message(lambda m: m.text == "📋 Услуги")
 async def open_services(message: Message):
     await message.answer("Выберите интересующую услугу:", reply_markup=services_menu())
+
+@router.message(F.text == "⬅️ Возврат в главное меню")
+async def back_to_main(message: Message):
+    await message.answer("🏠 Главное меню", reply_markup=main_menu())
