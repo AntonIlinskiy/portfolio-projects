@@ -16,6 +16,6 @@ def _try_include(name: str):
     except Exception as e:
         print(f"[handlers] failed: {name} -> {e}")
 
-# Подхватываем существующие модули (если файла нет — просто пропустим):
-for mod in ["start", "services", "portfolio", "reviews", "faq", "calc", "info", "request"]:
+for mod in ["start", "services", "portfolio", "reviews", "faq", "calc", "info", "request", "promos"]:
     _try_include(mod)
+

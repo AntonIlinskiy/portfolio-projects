@@ -9,6 +9,8 @@ def main_menu() -> ReplyKeyboardMarkup:
             [KeyboardButton(text="🧮 Калькулятор"), KeyboardButton(text="❓ FAQ")],
             [KeyboardButton(text="ℹ️ О компании"), KeyboardButton(text="📞 Контакты")],
             [KeyboardButton(text="📞 Оставить заявку")],
+            [KeyboardButton(text="🔥 Акции и скидки")],
+
         ],
         resize_keyboard=True
     )
