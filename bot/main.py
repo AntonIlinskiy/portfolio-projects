@@ -1,22 +1,19 @@
 import asyncio
+import os
 from aiogram import Bot, Dispatcher
-from bot.config import TOKEN
-from bot.handlers import start
-from bot.handlers.services import router as services_router
-from bot.handlers.request import router as request_router
-from bot.handlers import start, services, request
-from bot.handlers import portfolio
+from aiogram.fsm.storage.memory import MemoryStorage
+from dotenv import load_dotenv
 
+from bot.handlers import router as handlers_router  
+
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
 
 async def main():
     bot = Bot(token=TOKEN)
-    dp = Dispatcher()
+    dp = Dispatcher(storage=MemoryStorage())
 
-    # Подключаем роутеры
-    dp.include_router(start.router)
-    dp.include_router(services_router)
-    dp.include_router(request.router)
-    dp.include_router(portfolio.router)
+    dp.include_router(handlers_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
