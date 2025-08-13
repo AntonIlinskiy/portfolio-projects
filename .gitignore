@@ -6,3 +6,8 @@ __pycache__/
 
 # VSCode
 .vscode/
+
+
+construction-bot/creds/*.json
+creds/*.json
+*.credentials.json
