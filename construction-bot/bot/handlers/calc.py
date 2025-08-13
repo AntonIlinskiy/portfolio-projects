@@ -6,6 +6,9 @@ from bot.keyboards import main_menu
 
 router = Router()
 
+class CalcStates(StatesGroup):
+    waiting_area = State()
+
 class CalcFSM(StatesGroup):
     area = State()
     repair_type = State()
