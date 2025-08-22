@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# SQLite DB
+*.db
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# dotenv
+.env
+
+# Logs
+*.log
+
+# VSCode / PyCharm
+.vscode/
+.idea/
