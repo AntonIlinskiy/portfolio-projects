@@ -1,4 +1,3 @@
-# bot/handlers/start.py (фрагмент)
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
@@ -12,7 +11,7 @@ router = Router()
 async def on_start(msg: Message):
     await msg.answer(
         "<b>Привет!</b> Я бот про ЗОЖ, питание и тренировки.\n\n"
-        "Открой меню снизу или введи /help.",
+        "Открой меню ниже или введи /help.",
         reply_markup=main_menu_kb()
     )
 
@@ -50,13 +49,22 @@ async def on_help(msg: Message):
 
     await msg.answer(text, reply_markup=kb.as_markup())
 
-# Подсказка по нормам из кнопки «📊 Нормы»
-@router.callback_query(F.data == "help:norms_hint")
-async def help_norms(cb: CallbackQuery):
-    await cb.message.answer("Чтобы посчитать нормы, сначала пройди /profile, затем введи /norms.")
+
+@router.callback_query(F.data == "menu:workouts")
+async def go_workouts(cb: CallbackQuery):
+    await cb.message.answer("Открой тренировки: /workout")
     await cb.answer()
 
-# Кнопка «⏰ Напоминания» в /help
+@router.callback_query(F.data == "menu:profile")
+async def go_profile(cb: CallbackQuery):
+    await cb.message.answer("Запусти анкету: /profile")
+    await cb.answer()
+
+@router.callback_query(F.data == "menu:nutrition")
+async def go_nutrition(cb: CallbackQuery):
+    await cb.message.answer("Нормы: /norms · Меню: /menu")
+    await cb.answer()
+
 @router.callback_query(F.data == "menu:reminders")
 async def go_reminders(cb: CallbackQuery):
     await cb.message.answer(
@@ -67,4 +75,9 @@ async def go_reminders(cb: CallbackQuery):
         "• /unsetworkout — убрать время\n"
         "• /reminders — посмотреть статус"
     )
+    await cb.answer()
+
+@router.callback_query(F.data == "help:norms_hint")
+async def help_norms(cb: CallbackQuery):
+    await cb.message.answer("Чтобы посчитать нормы, сначала пройди /profile, затем введи /norms.")
     await cb.answer()

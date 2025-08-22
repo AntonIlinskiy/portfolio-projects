@@ -1,4 +1,3 @@
-# bot/main.py
 import asyncio
 import logging
 import os
@@ -7,9 +6,9 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import BotCommand
-from dotenv import load_dotenv # type: ignore
+from dotenv import load_dotenv 
 
-from bot.handlers import start, workouts, profile, nutrition, debug, reminders
+from bot.handlers import start, workouts, profile, nutrition, debug, reminders, subscription
 from bot.storage.db import engine, SessionLocal
 from bot.storage.models import Base, Reminder
 from bot.services.scheduler import scheduler as JOBS, schedule_user_reminders
@@ -51,6 +50,7 @@ async def main():
         dp.include_router(nutrition.router)
         dp.include_router(debug.router)
         dp.include_router(reminders.router)
+        dp.include_router(subscription.router)
 
         if not JOBS.running:
             JOBS.start()

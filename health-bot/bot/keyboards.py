@@ -1,4 +1,5 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def main_menu_kb():
     kb = InlineKeyboardBuilder()
@@ -8,3 +9,12 @@ def main_menu_kb():
     kb.button(text="💳 Подписка", callback_data="menu:billing")
     kb.adjust(2)
     return kb.as_markup()
+
+def main_menu_reply_kb():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📝 Анкета"), KeyboardButton(text="🏋️‍♂️ Тренировки")],
+            [KeyboardButton(text="🍎 Питание"), KeyboardButton(text="💳 Подписка")],
+        ],
+        resize_keyboard=True
+    )
